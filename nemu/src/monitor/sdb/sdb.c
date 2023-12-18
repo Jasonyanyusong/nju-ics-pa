@@ -66,6 +66,12 @@ static int cmd_si(char *args) {
   return 0;
 }
 
+static int cmd_r(char *args) {
+  printf("Registers - Hex Values\n");
+  isa_reg_display();
+  return 0;
+}
+
 static int cmd_help(char *args);
 
 static struct {
@@ -77,6 +83,7 @@ static struct {
   { "c", "Continue the execution of the program", cmd_c },
   { "q", "Exit NEMU", cmd_q },
   { "si", "Execute the program in N instructions", cmd_si},
+  { "r", "Display the value of registers", cmd_r },
 
   /* TODO: Add more commands */
 
