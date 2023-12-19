@@ -24,6 +24,8 @@ static int is_batch_mode = false;
 void init_regex();
 void init_wp_pool();
 
+word_t paddr_read(paddr_t addr, int len);
+
 /* We use the `readline' library to provide more flexibility to read from stdin. */
 static char* rl_gets() {
   static char *line_read = NULL;
@@ -72,6 +74,20 @@ static int cmd_r(char *args) {
   return 0;
 }
 
+static int cmd_m(char *args) {
+  uint64_t start = -1;
+  uint64_t size  = -1;
+
+  sscanf(args, "%ld %lx", &size, &start);
+  assert(start >= CONFIG_MBASE && start - CONFIG_MBASE <= CONFIG_MSIZE && size >= 0);
+
+  for (uint64_t i = 0; i < size; i = i + 1) {
+    printf("pmem @ 0x%16lx -> 0x%16lx\n", start + 4 * i, paddr_read(start + 4 * i, 4));
+  }
+
+  return 0;
+}
+
 static int cmd_help(char *args);
 
 static struct {
@@ -84,9 +100,7 @@ static struct {
   { "q", "Exit NEMU", cmd_q },
   { "si", "Execute the program in N instructions", cmd_si},
   { "r", "Display the value of registers", cmd_r },
-
-  /* TODO: Add more commands */
-
+  { "m", "Display the value of memroy in given size and address", cmd_m },
 };
 
 #define NR_CMD ARRLEN(cmd_table)
